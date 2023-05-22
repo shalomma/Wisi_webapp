@@ -32,7 +32,7 @@ def update_system_instruction():
     st.session_state['messages'][0] = {"role": "system", "content": st.session_state.text}
 
 
-st.sidebar.title("Sidebar")
+st.sidebar.title('')
 st.sidebar.text_area(label='System Instruction', value=system_instruction,
                      key='text', on_change=update_system_instruction)
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
