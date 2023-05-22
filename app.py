@@ -1,10 +1,15 @@
+import base64
+from io import BytesIO
+
 import openai
 import streamlit as st
 from streamlit_chat import message
+from elevenlabs import generate, play, voices
+import streamlit.components.v1 as components
 
 # Setting page title and header
 st.set_page_config(page_title="Wisi", page_icon=":robot_face:")
-st.markdown("<h1 style='text-align: center;'>Wisi - your social tutor </h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Wisi - your social tutor 🦉</h1>", unsafe_allow_html=True)
 
 # Initialise system instructions
 with open('system.txt', 'r') as f:
@@ -47,6 +52,24 @@ def generate_response(prompt):
     return response
 
 
+def audio_to_html(audio_bytes):
+    audio_io = BytesIO(audio_bytes)
+    audio_io.seek(0)
+    audio_base64 = base64.b64encode(audio_io.read()).decode("utf-8")
+    audio_html = f'<audio src="data:audio/mpeg;base64,{audio_base64}" controls autoplay></audio>'
+    return audio_html
+
+
+def text_to_speech_elevenlabs(response):
+    audio_stream = generate(
+        text=response,
+        voice="Bella",
+        model="eleven_monolingual_v1"
+    )
+    audio_html = audio_to_html(audio_stream)
+    return audio_html
+
+
 # container for chat history
 response_container = st.container()
 # container for text box
@@ -61,6 +84,8 @@ with container:
         output = generate_response(user_input)
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
+        audio = text_to_speech_elevenlabs(output)
+        components.html(audio, height=0)
 
 if st.session_state['generated']:
     with response_container:
