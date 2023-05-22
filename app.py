@@ -1,11 +1,13 @@
+import os
 import base64
-from io import BytesIO
-
 import openai
+from io import BytesIO
 import streamlit as st
 from streamlit_chat import message
-from elevenlabs import generate, play, voices
+from elevenlabs import generate, set_api_key
 import streamlit.components.v1 as components
+
+set_api_key(os.getenv("ELEVENLABS_API_KEY"))
 
 # Setting page title and header
 st.set_page_config(page_title="Wisi", page_icon=":robot_face:")
