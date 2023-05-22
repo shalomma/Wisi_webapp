@@ -32,10 +32,9 @@ def update_system_instruction():
     st.session_state['messages'][0] = {"role": "system", "content": st.session_state.text}
 
 
-# Sidebar - let user choose model, show total cost of current conversation, and let user clear the current conversation
 st.sidebar.title("Sidebar")
-counter_placeholder = st.sidebar.empty()
-st.sidebar.text_area(label='System Instruction', value=system_instruction, key='text', on_change=update_system_instruction)
+st.sidebar.text_area(label='System Instruction', value=system_instruction,
+                     key='text', on_change=update_system_instruction)
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
 
 # reset everything
