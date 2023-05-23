@@ -46,14 +46,25 @@ if clear_button:
 
 
 # generate a response
-def generate_response(prompt):
-    st.session_state['messages'].append({"role": "user", "content": prompt})
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=st.session_state['messages']
-    )
-    response = completion.choices[0].message.content
-    st.session_state['messages'].append({"role": "assistant", "content": response})
+def generate_response(prompt, n_tries=3):
+    counter = 0
+    response = "Sorry I'm having some difficulties speaking..."
+    while n_tries < counter:
+        try:
+            st.session_state['messages'].append({"role": "user", "content": prompt})
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state['messages']
+            )
+            response = completion.choices[0].message.content
+            st.session_state['messages'].append({"role": "assistant", "content": response})
+            return response
+        except openai.error.APIError as e:
+            print(e)
+            print('XXXXXXXXXX')
+            st.session_state['messages'].append({"role": "assistant", "content": response})
+        finally:
+            counter += 1
     return response
 
 
