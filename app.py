@@ -46,13 +46,20 @@ if clear_button:
 
 
 # generate a response
-def generate_response(prompt):
+def generate_response(prompt, n_tries=3):
     st.session_state['messages'].append({"role": "user", "content": prompt})
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=st.session_state['messages']
-    )
-    response = completion.choices[0].message.content
+    counter = 0
+    response = "Sorry! OpenAI are overloaded... Lets talk later. bye!"
+    while counter < n_tries:
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state['messages']
+            )
+            response = completion.choices[0].message.content
+            break
+        except openai.error.OpenAIError:
+            counter += 1
     st.session_state['messages'].append({"role": "assistant", "content": response})
     return response
 
